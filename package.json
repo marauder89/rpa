@@ -1,5 +1,5 @@
 {
-  "name": "gitServer",
+  "name": "node-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,5 +13,9 @@
     "express": "^4.17.1",
     "opencv4nodejs": "^5.6.0",
     "request": "^2.88.2"
+  },
+  "opencv4nodejs": {
+    "disableAutoBuild": 1,
+    "opencvIncludeDir": "/home/ubuntu/opencv/opencv-3.4.5/build/include"
   }
 }
