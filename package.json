@@ -15,7 +15,6 @@
     "request": "^2.88.2"
   },
   "opencv4nodejs": {
-    "disableAutoBuild": 1,
-    "opencvIncludeDir": "/home/ubuntu/opencv/opencv-3.4.5/build/include"
+    "disableAutoBuild": 1
   }
 }
