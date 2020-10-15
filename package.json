@@ -11,8 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "fs": "0.0.1-security",
     "opencv4nodejs": "^5.6.0",
-    "request": "^2.88.2"
+    "selenium-webdriver": "^4.0.0-alpha.7"
   },
   "opencv4nodejs": {
     "disableAutoBuild": 1
