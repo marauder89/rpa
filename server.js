@@ -4,11 +4,14 @@ const app = express();
 const port = 3000;
 
 const { Builder, Capabilities, By, until } = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
+chrome.setDefaultService(new chrome.ServiceBuilder('C:/chromedriver.exe').build());
 const capabilities = Capabilities.chrome();
+// const driver = new Builder().usingServer('http://localhost:4444/').withCapabilities(capabilities).build();  //remote server 사용시
 const cv = require('opencv4nodejs');
 const fs = require('fs');
 
-const fileDir = 'C:/Users/DTA/Desktop/selenium/USER/cn=심청이노인복지센터2,ou=건강보험,ou=MOHW RA센터,ou=등록기관,ou=licensedCA,o=KICA,c=KR';
+const fileDir = 'C:/key';
 const id = '32729000302';
 const password = 'simcare2378';
 
@@ -16,10 +19,8 @@ let url = '';
 let webCookie = {};
 
 app.get('/login', async(req, res) => {
-    const driver = new Builder()
-        .usingServer('http://localhost:4444/')
-        .withCapabilities(capabilities)
-        .build();
+    const driver = new Builder().withCapabilities(capabilities).build();
+    
     try {
         await driver.get('http://www.longtermcare.or.kr/npbs/auth/login/loginForm?&rtnUrl=');
         await driver.executeScript(`document.getElementById('userNo').value = '${id}';`);
@@ -86,11 +87,9 @@ app.get('/login', async(req, res) => {
     }
 });
 
-app.get('/getUrl', async(req, res) => {
-    const driver = new Builder()
-        .usingServer('http://localhost:4444/')
-        .withCapabilities(capabilities)
-        .build();
+app.get('/getUrl', async(req, res) => {    
+    const driver = new Builder().withCapabilities(capabilities).build();
+
     try {
         await driver.get('http://www.longtermcare.or.kr');
         await driver.manage().deleteAllCookies();
