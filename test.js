@@ -1,5 +1,5 @@
 
-const { Builder, Capabilities, By, Actions } = require("selenium-webdriver");
+const { Builder, Capabilities, By, until } = require("selenium-webdriver");
 const capabilities = Capabilities.chrome();
 const cv = require('opencv4nodejs');
 const fs = require('fs');
@@ -16,7 +16,8 @@ const password = 'simcare2378';
     try {
         await driver.get('http://www.longtermcare.or.kr/npbs/auth/login/loginForm?&rtnUrl=');
         await driver.executeScript(`document.getElementById('userNo').value = '${id}';`);
-        await driver.findElement(By.id('btn_login_A2')).click();        
+        await driver.findElement(By.id('btn_login_A2')).click();
+        await driver.wait(until.elementLocated(By.id('xwup_media_memorystorage')), 20000, 'ANUSIGN init error');        
         await driver.findElement(By.id('xwup_media_memorystorage')).click();
         await driver.findElement(By.id("xwup_openFile")).sendKeys(`${fileDir}/signPri.key\n${fileDir}/signCert.der`);
         await driver.findElement(By.id('xwup_inputpasswd_tek_input1')).click();
@@ -29,16 +30,43 @@ const password = 'simcare2378';
                 await onKeyboardClick(char);
             }
             await driver.executeScript(`tk.done();`);
+
+            let changed = false;
+            while(!changed){
+                await sleep(100);
+                const tabs =  await driver.getAllWindowHandles();
+
+                if(tabs.length > 1) {
+                    console.log('tab changed');
+                    await driver.switchTo().window(tabs[1]);
+                    changed = true;
+                    break;
+                }
+            };
+            await driver.wait(until.elementLocated(By.id('mainframe.VFrameSet.HFrameSet.VFrameSetSub.frameMain.POPUP')), 10000, 'popup not found');
+            await driver.findElement(By.id('mainframe.VFrameSet.HFrameSet.VFrameSetSub.frameMain.POPUP.titlebar.closebutton:icontext')).click();
+            const contents = await driver.findElement(By.id('mainframe.VFrameSet.HFrameSet.VFrameSetSub.frameMain.form.div_Board.form.Tab00.tabpage2.form.grd_Main.body.gridrow_0.cell_0_1'));
+            const text = await contents.getText();
+            console.log(text);
+            
+            
+            // const nexacontainer = await driver.findElement(By.id('nexacontainer'));
+            // const childs = await nexacontainer.findElements(By.className('GridRowControl row nexatransform'));
+            // console.log(childs);
         });
+
+        sleep = (time) => {
+            return new Promise(resolve => setTimeout(resolve, time));
+        };
 
         onKeyboardClick = async(char) => {
             const keyboard = await cv.imreadAsync(`tk/keyboard.png`);
             const key = await cv.imreadAsync(`tk/${char}.png`);
 
-            const matched = keyboard.matchTemplate(key, 5);
-            const minMax = matched.minMaxLoc();
+            const matched = await keyboard.matchTemplateAsync(key, 5);
+            const minMax = await matched.minMaxLocAsync();
             
-            const {maxLoc: {x, y}} = minMax;            
+            const {maxLoc: {x, y}} = minMax;
             
             const centerX = Math.floor((x + (x + key.cols)) / 2);
             const centerY = Math.floor((y + (y + key.rows)) / 2);
@@ -48,8 +76,8 @@ const password = 'simcare2378';
             const vertexY = Math.floor(height / 2)*-1;
             
             return driver.actions({async: true}).move({origin: virtualKeyboard, x: vertexX + centerX, y: vertexY + centerY}).press().perform();
-        }
-        
+        };
+
     } finally {
         
     }
