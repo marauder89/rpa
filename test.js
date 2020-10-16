@@ -48,11 +48,8 @@ const password = 'simcare2378';
             const contents = await driver.findElement(By.id('mainframe.VFrameSet.HFrameSet.VFrameSetSub.frameMain.form.div_Board.form.Tab00.tabpage2.form.grd_Main.body.gridrow_0.cell_0_1'));
             const text = await contents.getText();
             console.log(text);
+          
             
-            
-            // const nexacontainer = await driver.findElement(By.id('nexacontainer'));
-            // const childs = await nexacontainer.findElements(By.className('GridRowControl row nexatransform'));
-            // console.log(childs);
         });
 
         sleep = (time) => {
@@ -78,7 +75,7 @@ const password = 'simcare2378';
             return driver.actions({async: true}).move({origin: virtualKeyboard, x: vertexX + centerX, y: vertexY + centerY}).press().perform();
         };
 
-    } finally {
+    } catch(error) {
         
     }
     
