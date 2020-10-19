@@ -25,7 +25,7 @@ app.get('/login', async(req, res) => {
         await driver.get('http://www.longtermcare.or.kr/npbs/auth/login/loginForm?&rtnUrl=');
         await driver.executeScript(`document.getElementById('userNo').value = '${id}';`);
         await driver.findElement(By.id('btn_login_A2')).click();
-        await driver.wait(until.elementLocated(By.id('xwup_media_memorystorage')), 20000, 'ANUSIGN init error');        
+        await driver.wait(until.elementLocated(By.id('xwup_media_memorystorage')), 100000, 'ANUSIGN init error');        
         await driver.findElement(By.id('xwup_media_memorystorage')).click();
         await driver.findElement(By.id("xwup_openFile")).sendKeys(`${fileDir}/signPri.key\n${fileDir}/signCert.der`);
         await driver.findElement(By.id('xwup_inputpasswd_tek_input1')).click();
@@ -51,7 +51,7 @@ app.get('/login', async(req, res) => {
                     break;
                 }
             };
-            await driver.wait(until.elementLocated(By.id('mainframe.VFrameSet.HFrameSet.VFrameSetSub.frameMain.POPUP')), 10000, 'popup not found');
+            await driver.wait(until.elementLocated(By.id('mainframe.VFrameSet.HFrameSet.VFrameSetSub.frameMain.POPUP')), 100000, 'popup not found');
             await driver.findElement(By.id('mainframe.VFrameSet.HFrameSet.VFrameSetSub.frameMain.POPUP.titlebar.closebutton:icontext')).click();
 
             webCookie = await driver.manage().getCookies();
