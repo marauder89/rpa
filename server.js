@@ -1,28 +1,25 @@
 
 const express = require('express');
-const app = express();
-const port = 3000;
-
-const { Builder, Capabilities, By, until } = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome');
-chrome.setDefaultService(new chrome.ServiceBuilder('C:/chromedriver.exe').build());
-const capabilities = Capabilities.chrome();
-// const driver = new Builder().usingServer('http://localhost:4444/').withCapabilities(capabilities).build();  //remote server 사용시
 const cv = require('opencv4nodejs');
 const fs = require('fs');
+const { Builder, By, until } = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
+const proxy = require('selenium-webdriver/proxy');
 
+const app = express();
+const port = 3000;
 const fileDir = 'C:/key';
 const id = '32729000302';
 const password = 'simcare2378';
-
 let url = '';
 let webCookie = {};
 
-app.get('/login', async(req, res) => {
-    const driver = new Builder().withCapabilities(capabilities).build();
+app.get('/login', async(req, res) => {    
+    //.setChromeOptions(new chrome.Options().addArguments('--proxy-server=socks5://127.0.0.1:9150'))    -proxy 설정
+    const driver = new Builder().forBrowser('chrome').build();
     
-    try {
-        await driver.get('http://www.longtermcare.or.kr/npbs/auth/login/loginForm?&rtnUrl=');
+    try {        
+        await driver.get('http://www.longtermcare.or.kr/npbs/auth/login/loginForm.web?menuId=npe0000002160&rtnUrl=&zoomSize=');
         await driver.executeScript(`document.getElementById('userNo').value = '${id}';`);
         await driver.findElement(By.id('btn_login_A2')).click();
         await driver.wait(until.elementLocated(By.id('xwup_media_memorystorage')), 100000, 'ANUSIGN init error');        
@@ -83,12 +80,12 @@ app.get('/login', async(req, res) => {
         };
 
     } catch(error) {
-        
+        console.error(error);
     }
 });
 
 app.get('/getUrl', async(req, res) => {    
-    const driver = new Builder().withCapabilities(capabilities).build();
+    const driver = new Builder().forBrowser('chrome').build();
 
     try {
         await driver.get('http://www.longtermcare.or.kr');
@@ -98,11 +95,12 @@ app.get('/getUrl', async(req, res) => {
         }        
         await driver.get(url);
     } catch(error) {
-        
+        console.error(error);
     }
 });
 
 app.listen(port, '0.0.0.0', () => {
+    chrome.setDefaultService(new chrome.ServiceBuilder('C:/chromedriver.exe').build());
     console.log(`Example app listening at http://localhost:${port}`);
 });
 
