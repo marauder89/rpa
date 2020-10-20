@@ -20,7 +20,7 @@ app.get('/login', async(req, res) => {
     
     try {        
         await driver.get('http://www.longtermcare.or.kr/npbs/auth/login/loginForm.web?menuId=npe0000002160&rtnUrl=&zoomSize=');
-        await driver.executeScript(`document.getElementById('userNo').value = '${id}';`);
+        await driver.executeAsyncScript(`document.getElementById('userNo').value = '${id}';`);
         await driver.findElement(By.id('btn_login_A2')).click();
         await driver.wait(until.elementLocated(By.id('xwup_media_memorystorage')), 100000, 'ANUSIGN init error');        
         await driver.findElement(By.id('xwup_media_memorystorage')).click();
@@ -34,7 +34,7 @@ app.get('/login', async(req, res) => {
             for(char of password.split('')){
                 await onKeyboardClick(char);
             }
-            await driver.executeScript('tk.done();');
+            await driver.executeAsyncScript('tk.done();');
 
             let changed = false;
             while(!changed){
